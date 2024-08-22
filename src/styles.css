@@ -1,0 +1,25 @@
+/* You can add global styles to this file, and also import other style files */
+
+.bs-button {
+  min-width: 120px;
+}
+
+/* does not work */
+/* .modal-backdrop {
+    z-index: -1000;
+  } */
+
+  /* does not work */
+  /* .modal-backdrop {
+    z-index: 2147483647 !important;
+} */
+
+/* does not work */
+/* .modal {
+  background: rgba(0, 0, 0, 0.5); 
+}
+.modal-backdrop {
+  display: none;
+} */
+
+

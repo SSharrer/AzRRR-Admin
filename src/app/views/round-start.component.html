@@ -1,0 +1,35 @@
+<div class="modal" id="roundStartModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Start Round</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="roundForm">
+          Start Date:
+          <br/>
+          <span class="fw-bold">{{ startDate | date: 'M/d/yyyy' }}</span>
+          <br/>
+          <br/>
+          <div class="form-floating">
+            <select class="form-select" formControlName="groupSize">
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+            <label>Group Size</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-primary bs-button me-2" (click)="onClickStart()" [disabled]="!roundForm.valid">Start Round</button>
+        <button class="btn btn-outline-danger  bs-button" (click)="onClickCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

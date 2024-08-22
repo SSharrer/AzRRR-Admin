@@ -1,0 +1,51 @@
+<h4 class="mt-3">Manage Rounds</h4>
+<hr/>
+<button class="btn btn-outline-primary bs-button" (click)="onClickStartRound()">Start Round</button>
+<table class="table table-bordered table-hover mt-3">
+  <thead class="table-light">
+    <tr>
+      <th scope="col">
+        Start Date
+      </th>
+      <th scope="col">
+        End Date
+      </th>
+      <th scope="col">
+        Invitations Sent
+      </th>
+      <th scope="col">
+        Group Size
+      </th>
+      <th scope="col">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of rounds" (click)="onClickRoundDetails(item)">
+      <td>
+        {{ item.beginDate | date: 'M/d/yyyy' }}
+      </td>
+      <td>
+        {{ item.endDate | date: 'M/d/yyyy' }}
+      </td>
+      <td>
+        {{ getInvitationsSentStatus(item) }}
+      </td>
+      <td>
+        {{ item.groupSize }}
+      </td>
+      <td class="text-center">
+        <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEndRound(item)">End Round</button>
+        <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickRoundDetails(item)">Round Details</button>
+        <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteRound(item)">Delete Round</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<app-round-details>
+</app-round-details>
+
+<app-round-start
+  (saved)="loadRounds()">
+</app-round-start>

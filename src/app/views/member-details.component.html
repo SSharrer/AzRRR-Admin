@@ -1,0 +1,41 @@
+<div class="modal" id="memberDetailsModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Member Details</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="memberForm">
+          <div class="form-floating mb-2">
+            <input type="text" class="form-control" placeholder="" formControlName="firstName"
+              maxlength="50"
+              [class.is-invalid]="!memberForm.controls.firstName.valid">
+            <label>First Name</label>
+          </div>
+          <div class="form-floating mb-2">
+            <input type="text" class="form-control" placeholder="" formControlName="lastName"
+              maxlength="50"
+              [class.is-invalid]="!memberForm.controls.lastName.valid">
+            <label>Last Name</label>
+          </div>
+          <div class="form-floating mb-2">
+            <input type="email" class="form-control" placeholder="" formControlName="email"
+              maxlength="75"
+              [class.is-invalid]="!memberForm.controls.email.valid"
+              [email]="true">
+            <label>Email Address</label>
+          </div>
+          <div class="form-floating">
+            <input type="text" class="form-control" placeholder="" formControlName="phone"
+              maxlength="20">
+            <label>Phone Number</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-primary bs-button me-2" (click)="onClickSave()" [disabled]="!memberForm.valid">Save Changes</button>
+        <button class="btn btn-outline-danger  bs-button" (click)="onClickCancel()">Cancel Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
