@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import * as bootstrap from "bootstrap"
-import { isNil } from "lodash";
+import { isNil, orderBy, sortBy } from "lodash";
 
 import { AuthService } from "../services/auth.service";
 import { AppService } from "../services/app.service";
@@ -46,7 +46,7 @@ export class RoundListComponent implements OnInit {
     this.dataService.getAllRounds(this.org.orgID).subscribe({
       next: rounds => {
         this.appService.decrementBusyCounter();
-        this.rounds = rounds
+        this.rounds = orderBy(rounds, r => r.endDate, 'desc');
       },
       error: () => {
         this.appService.decrementBusyCounter();
