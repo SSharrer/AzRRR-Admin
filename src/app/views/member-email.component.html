@@ -1,0 +1,77 @@
+<div class="modal" id="memberEmailModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Member Email</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="emailForm">
+          <div class="row">
+            <div class="col-4">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="emailMembers" formControlName="includeMembers">
+                <label class="form-check-label" for="emailMembers">
+                  Include Members
+                </label>
+              </div>
+              <div formArrayName="additionalRecipients">
+                Additional Recipients:
+                <br/>
+                <ng-container *ngFor="let additionalRecipient of emailForm.controls.additionalRecipients.controls; let recipientIndex=index"
+                  [formGroupName]="recipientIndex">
+                  <div class="input-group mb-2">
+                    <div class="form-floating">
+                      <input
+                      type="email"
+                      class="form-control"
+                      maxlength="75"
+                      placeholder=""
+                      formControlName="recipientEmail"
+                      [class.is-invalid]="!additionalRecipient.controls.recipientEmail.valid">
+                      <label>Email Address</label>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger"
+                      (click)="onClickRemoveRecipient(recipientIndex)">
+                      X
+                    </button>
+                  </div>
+                </ng-container>
+                <button class="btn btn-outline-primary btn-sm mb-2" (click)="onClickAddRecipient()">Add Recipient</button>
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="form-floating mb-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  maxlength="100"
+                  placeholder=""
+                  formControlName="emailSubject"
+                  [class.is-invalid]="!emailForm.controls.emailSubject.valid">
+                <label>Email Subject</label>
+              </div>
+              <br/>
+              <div class="form-floating mb-2">
+                <textarea
+                  class="form-control"
+                  style="height: 300px;"
+                  maxlength="1000"
+                  placeholder=""
+                  formControlName="emailBody"
+                  [class.is-invalid]="!emailForm.controls.emailBody.valid">
+                </textarea>
+                <label>Email Body</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-primary bs-button me-2" (click)="onClickSend()" [disabled]="!canSend">Send Email</button>
+        <button class="btn btn-outline-danger bs-button" (click)="onClickCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

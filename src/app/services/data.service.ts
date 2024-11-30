@@ -3,11 +3,14 @@ import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
 
 import { Round } from "../models/round.model";
-
 import { Member } from "../models/member.model";
+import { StartRoundRequest } from "../requests/start-round.request";
 
 import * as Util from '../core/util';
 import { environment } from "../../environments/environment";
+import { EmailRequest } from "../requests/email.request";
+import { observableToBeFn } from "rxjs/internal/testing/TestScheduler";
+
 
 @Injectable()
 export class DataService {
@@ -26,12 +29,8 @@ export class DataService {
     return this.http.get<Round[]>(url, { params });
   }
 
-  startRound(orgID: number, groupSize: number): Observable<void> {
+  startRound(request: StartRoundRequest): Observable<void> {
     const url = environment.webApiBaseUrl +'round/start'
-    const request = {
-      orgID,
-      groupSize
-    }
     return this.http.post<void>(url, request);
   }
 
@@ -74,5 +73,10 @@ export class DataService {
   deleteMember(memberID: number): Observable<void> {
     const url = environment.webApiBaseUrl + 'member/' + memberID.toString();
     return this.http.delete<void>(url);
+  }
+
+  sendMemberEmail(request: EmailRequest): Observable<void> {
+    const url = environment.webApiBaseUrl + 'member/sendemail';
+    return this.http.post<void>(url, request);
   }
 }

@@ -119,22 +119,23 @@ export class RoundListComponent implements OnInit {
 
   // private methods
 
-  startRound(): void {
-    this.appService.incrementBusyCounter();
-    this.dataService.startRound(this.org.orgID, 3).subscribe({
-      error: () => {
-        this.appService.decrementBusyCounter();
-        window.alert("There was an error starting a new Round!");
-      },
-      complete: () => {
-        window.alert('Round successfully started!');
-        this.appService.decrementBusyCounter();
-        this.loadRounds();
-      }
-    });
-  }
+  // User for testing!
+  // startRound(): void {
+  //   this.appService.incrementBusyCounter();
+  //   this.dataService.startRound(this.org.orgID, 3).subscribe({
+  //     error: () => {
+  //       this.appService.decrementBusyCounter();
+  //       window.alert("There was an error starting a new Round!");
+  //     },
+  //     complete: () => {
+  //       window.alert('Round successfully started!');
+  //       this.appService.decrementBusyCounter();
+  //       this.loadRounds();
+  //     }
+  //   });
+  // }
 
-  endRound(roundID: number): void {
+  private endRound(roundID: number): void {
     if (!this.canEndRound) {
       window.alert('This Round has already ended!');
       return;
@@ -154,7 +155,7 @@ export class RoundListComponent implements OnInit {
     });
   }
 
-  deleteRound(roundID: number): void {
+  private deleteRound(roundID: number): void {
     this.appService.incrementBusyCounter();
     this.dataService.deleteRound(roundID).subscribe({
       error: () => {

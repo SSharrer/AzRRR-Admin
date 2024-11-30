@@ -6,7 +6,7 @@ import { isNil } from "lodash";
 import { AuthService } from "../services/auth.service";
 import { AppService } from "../services/app.service";
 
-import { LoginRequest, LoginRequestResult, LoginRequestStatus } from "../requests/login-request.model";
+import { LoginRequest, LoginRequestResult, LoginRequestStatus } from "../requests/login.request";
 
 @Component({
   selector: 'app-login',

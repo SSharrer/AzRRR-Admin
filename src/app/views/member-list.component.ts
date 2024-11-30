@@ -10,6 +10,7 @@ import { DataService } from "../services/data.service";
 import { OrgSummary } from "../models/org.model";
 import { Member } from "../models/member.model";
 import { MemberDetailsComponent } from "./member-details.component";
+import { MemberEmailComponent } from "./member-email.component";
 
 import * as Constant from '../core/constant';
 
@@ -20,7 +21,10 @@ import * as Constant from '../core/constant';
 export class MemberListComponent implements OnInit {
   
   @ViewChild(MemberDetailsComponent)
-  memberDetailsComponent: MemberDetailsComponent
+  memberDetailsComponent: MemberDetailsComponent;
+
+  @ViewChild(MemberEmailComponent)
+  memberEmailComponent: MemberEmailComponent;
 
   org: OrgSummary;
   members: Member[] = [];
@@ -84,6 +88,17 @@ export class MemberListComponent implements OnInit {
     });
 
     this.memberDetailsComponent.initialize(member, true, modalRef);
+
+    modalRef.show();
+  }
+
+  onClickEmailMembers(): void {
+    const modalRef = new bootstrap.Modal(Constant.Modal.memberEmail, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    this.memberEmailComponent.initialize(modalRef);
 
     modalRef.show();
   }

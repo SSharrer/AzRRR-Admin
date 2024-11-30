@@ -47,7 +47,7 @@ export class MemberDetailsComponent implements OnInit {
       firstName: new FormControl<string>(null, [ Validators.required ]),
       lastName: new FormControl<string>(null, [ Validators.required ]),
       phone: new FormControl<string>(null),
-      email: new FormControl<string>(null, [ Validators.required ])
+      email: new FormControl<string>(null, [ Validators.required, Validators.email ])
     });
   }
 

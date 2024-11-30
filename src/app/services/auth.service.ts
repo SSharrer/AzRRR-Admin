@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { isNil } from "lodash";
 
-import { LoginRequest, LoginRequestResult } from "../requests/login-request.model";
+import { LoginRequest, LoginRequestResult } from "../requests/login.request";
 import { OrgSummary } from "../models/org.model";
 
 import { environment } from "../../environments/environment";

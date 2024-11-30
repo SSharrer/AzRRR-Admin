@@ -21,6 +21,7 @@ import { RoundDetailsComponent } from './views/round-details.component';
 import { RoundStartComponent } from './views/round-start.component';
 import { MemberListComponent } from './views/member-list.component';
 import { MemberDetailsComponent } from './views/member-details.component';
+import { MemberEmailComponent } from './views/member-email.component';
 
 const routes: Routes =[
   { path: 'login', component: LoginComponent },
@@ -39,6 +40,7 @@ const routes: Routes =[
     HomeComponent,
     MemberListComponent,
     MemberDetailsComponent,
+    MemberEmailComponent,
     RoundListComponent,
     RoundDetailsComponent,
     RoundStartComponent,
