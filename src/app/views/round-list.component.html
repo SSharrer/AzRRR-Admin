@@ -21,25 +21,27 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of rounds" (click)="onClickRoundDetails(item)">
-      <td>
-        {{ item.beginDate | date: 'M/d/yyyy' }}
-      </td>
-      <td>
-        {{ item.endDate | date: 'M/d/yyyy' }}
-      </td>
-      <td>
-        {{ getInvitationsSentStatus(item) }}
-      </td>
-      <td>
-        {{ item.groupSize }}
-      </td>
-      <td class="text-center">
-        <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEndRound(item)">End Round</button>
-        <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickRoundDetails(item)">Round Details</button>
-        <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteRound(item)">Delete Round</button>
-      </td>
-    </tr>
+    @for (item of rounds; track item) {
+      <tr (click)="onClickRoundDetails(item)">
+        <td>
+          {{ item.beginDate | date: 'M/d/yyyy' }}
+        </td>
+        <td>
+          {{ item.endDate | date: 'M/d/yyyy' }}
+        </td>
+        <td>
+          {{ getInvitationsSentStatus(item) }}
+        </td>
+        <td>
+          {{ item.groupSize }}
+        </td>
+        <td class="text-center">
+          <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEndRound(item)">End Round</button>
+          <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickRoundDetails(item)">Round Details</button>
+          <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteRound(item)">Delete Round</button>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
 

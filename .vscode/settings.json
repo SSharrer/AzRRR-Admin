@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/d30da2f9-ef27-4fdd-8360-eb608ca14059/resourceGroups/RRR/providers/Microsoft.Web/sites/RRRAdmin2024",
+    "appService.deploySubpath": "dist\\rrr-admin"
+}

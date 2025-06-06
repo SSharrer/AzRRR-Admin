@@ -17,27 +17,28 @@
               <div formArrayName="additionalRecipients">
                 Additional Recipients:
                 <br/>
-                <ng-container *ngFor="let additionalRecipient of emailForm.controls.additionalRecipients.controls; let recipientIndex=index"
-                  [formGroupName]="recipientIndex">
-                  <div class="input-group mb-2">
-                    <div class="form-floating">
-                      <input
-                      type="email"
-                      class="form-control"
-                      maxlength="75"
-                      placeholder=""
-                      formControlName="recipientEmail"
-                      [class.is-invalid]="!additionalRecipient.controls.recipientEmail.valid">
-                      <label>Email Address</label>
+                @for (additionalRecipient of emailForm.controls.additionalRecipients.controls; track additionalRecipient; let recipientIndex=$index) {
+                  <ng-container [formGroupName]="recipientIndex">
+                    <div class="input-group mb-2">
+                      <div class="form-floating">
+                        <input
+                        type="email"
+                        class="form-control"
+                        maxlength="75"
+                        placeholder=""
+                        formControlName="recipientEmail"
+                        [class.is-invalid]="!additionalRecipient.controls.recipientEmail.valid">
+                        <label>Email Address</label>
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger"
+                        (click)="onClickRemoveRecipient(recipientIndex)">
+                        X
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger"
-                      (click)="onClickRemoveRecipient(recipientIndex)">
-                      X
-                    </button>
-                  </div>
-                </ng-container>
+                  </ng-container>
+                }
                 <button class="btn btn-outline-primary btn-sm mb-2" (click)="onClickAddRecipient()">Add Recipient</button>
               </div>
             </div>

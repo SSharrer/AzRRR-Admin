@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, viewChild } from "@angular/core";
-import { tap } from "rxjs";
-import { cloneDeep, sortBy } from "lodash";
+import { finalize, forkJoin, Observable, tap } from "rxjs";
+import { cloneDeep, isEmpty, isNil, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
 
 import { AuthService } from "../services/auth.service";
@@ -13,6 +13,8 @@ import { MemberDetailsComponent } from "./member-details.component";
 import { MemberEmailComponent } from "./member-email.component";
 
 import * as Constant from '../core/constant';
+import { Round } from "../models/round.model";
+import { RoundSignupRequest } from "../requests/round-signup.request";
 
 @Component({
   selector: 'app-users',
@@ -28,6 +30,7 @@ export class MemberListComponent implements OnInit {
 
   org: OrgSummary;
   members: Member[] = [];
+  activeRound: Round = null;
 
   constructor(
     private authService: AuthService,
@@ -37,26 +40,52 @@ export class MemberListComponent implements OnInit {
 
   ngOnInit(): void {
     this.org = this.authService.getOrg();
-    this.loadMembers();
+
+    const tasks = [];
+    tasks.push(this.loadActiveRound$());
+    tasks.push(this.loadMembers$());
+
+    this.appService.incrementBusyCounter();
+    forkJoin(tasks).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
+      error: () => {
+        window.alert("There was an error loading Members!")
+      }
+    })
   }
+
 
   // load data methods
 
   loadMembers(): void {
     this.appService.incrementBusyCounter();
-    this.dataService.getAllMembers(this.org.orgID).subscribe({
-      next: members => {
-        this.appService.decrementBusyCounter();
-        this.members = sortBy(members, m => m.displayName)
-      },
+    this.loadMembers$().pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
       error: () => {
-        this.appService.decrementBusyCounter();
         window.alert("There was an error loading Members!")
-      },
-    });
+      }
+    })
   }
 
-  // button handlers
+  loadMembers$(): Observable<any> {
+    return this.dataService.getAllMembers(this.org.orgID).pipe(
+      tap(members => {
+        this.members = sortBy(members, m => m.displayName)
+      })
+    );
+  }
+
+  loadActiveRound$(): Observable<any> {
+    return this.dataService.getActiveRound(this.org.orgID).pipe(
+      tap(round => {
+        this.activeRound = round;
+      })
+    )
+  }
+
+  // click handlers
 
   onClickEditMember(member: Member): void {
     const memberClone = cloneDeep(member);
@@ -103,6 +132,50 @@ export class MemberListComponent implements OnInit {
     modalRef.show();
   }
 
+  onClickSignupMembers(): void {
+    if (!this.canSignupMembers) {
+      return;
+    }
+
+    if (window.confirm("Signup selected Members to current Round?")) {
+      var request = new RoundSignupRequest();
+      request.orgID = this.activeRound.orgID;
+      request.roundID = this.activeRound.roundID;
+      request.clubRoundID = this.activeRound.clubRoundID;
+      request.memberIDs = this.members.filter(m => m.selected).map(m => m.memberID);
+
+      this.appService.incrementBusyCounter();
+      this.dataService.signupMultipleForRound(request).pipe(
+        finalize(() => this.appService.decrementBusyCounter())
+      ).subscribe({
+        error: () => {
+          window.alert("There was an error processing your request!");
+        },
+        complete: () => {
+          window.alert("Selected Members signed up to Active Round!");
+        }
+      });
+    }
+  }
+
+  onSelectMember(member: Member): void {
+    member.selected = !member.selected;
+  }
+
+  // ui helpers
+
+  get hasActiveRound(): boolean {
+    return !isNil(this.activeRound);
+  }
+
+  get canSignupMembers(): boolean {
+    return this.hasActiveRound
+      ? !isEmpty(this.members)
+        ? this.members.some(m => m.selected)
+        : false
+      : false;
+  }
+
   // private methods
 
   deleteMember(memberID: number): void {
@@ -115,8 +188,9 @@ export class MemberListComponent implements OnInit {
       complete: () => {
         this.appService.decrementBusyCounter();
         window.alert('Member successfully deleted!');
-        this.loadMembers();
+        this.loadMembers$();
       }
     })
   }
 }
+

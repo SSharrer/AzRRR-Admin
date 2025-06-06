@@ -10,6 +10,7 @@ import * as Util from '../core/util';
 import { environment } from "../../environments/environment";
 import { EmailRequest } from "../requests/email.request";
 import { observableToBeFn } from "rxjs/internal/testing/TestScheduler";
+import { RoundSignupRequest } from "../requests/round-signup.request";
 
 
 @Injectable()
@@ -29,6 +30,14 @@ export class DataService {
     return this.http.get<Round[]>(url, { params });
   }
 
+  getActiveRound(orgID: number): Observable<Round> {
+    const url = environment.webApiBaseUrl + 'round/active';
+    const params = {
+      orgID
+    };
+    return this.http.get<Round>(url, { params });
+  }
+  
   startRound(request: StartRoundRequest): Observable<void> {
     const url = environment.webApiBaseUrl +'round/start'
     return this.http.post<void>(url, request);
@@ -42,6 +51,11 @@ export class DataService {
   deleteRound(roundID: number): Observable<void> {
     const url = environment.webApiBaseUrl + 'round/' + roundID.toString();
     return this.http.delete<void>(url);
+  }
+
+  signupMultipleForRound(request: RoundSignupRequest): Observable<any> {
+    const url = environment.webApiBaseUrl + 'round/signupmultiple';
+    return this.http.post(url, request);
   }
 
   // members

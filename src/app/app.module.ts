@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { DataService } from './services/data.service';
 import { AuthService } from './services/auth.service';
@@ -22,6 +22,7 @@ import { RoundStartComponent } from './views/round-start.component';
 import { MemberListComponent } from './views/member-list.component';
 import { MemberDetailsComponent } from './views/member-details.component';
 import { MemberEmailComponent } from './views/member-email.component';
+import { BooleanToYesNoPipe } from './core/boolean-yesno.pipe';
 
 const routes: Routes =[
   { path: 'login', component: LoginComponent },
@@ -44,13 +45,18 @@ const routes: Routes =[
     RoundListComponent,
     RoundDetailsComponent,
     RoundStartComponent,
-    OrgSummaryComponent
+    OrgSummaryComponent,
+    BooleanToYesNoPipe
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forRoot(routes)
+  ],
+  exports: [
+    BooleanToYesNoPipe
   ],
   providers: [
     AuthService,

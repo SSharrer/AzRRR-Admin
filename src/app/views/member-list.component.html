@@ -1,10 +1,20 @@
 <h4 class="mt-3">Manage Members</h4>
 <hr/>
 <button class="btn btn-outline-primary bs-button me-2" (click)="onClickNewMember()">New Member</button>
-<button class="btn btn-outline-primary bs-button" (click)="onClickEmailMembers()">Email Members</button>
+<button class="btn btn-outline-primary bs-button me-2" (click)="onClickEmailMembers()">Email Members</button>
+<button class="btn btn-outline-primary bs-button me-2" [disabled]="!canSignupMembers" (click)="onClickSignupMembers()">Signup Selected Members</button>
+@if (!hasActiveRound) {
+  <span class="text-danger">No active Round!</span>
+}
+@if (hasActiveRound) {
+  <span class="text-primary">Active Round in Progress!</span>
+}
 <table class="table table-bordered table-hover mt-3">
   <thead class="table-light">
     <tr>
+      <th scope="col">
+        Select
+      </th>
       <th scope="col">
         Member
       </th>
@@ -15,25 +25,38 @@
         Phone Number
       </th>
       <th scope="col">
+        Auto Enroll
+      </th>
+      <th scope="col">
       </th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of members" (click)="onClickEditMember(item)">
-      <td>
-        {{ item.displayName }}
-      </td>
-      <td>
-        {{ item.email }}
-      </td>
-      <td>
-        {{ item.phone }}
-      </td>
-      <td class="text-center">
-        <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEditMember(item)">Edit Member</button>
-        <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteMember(item)">Delete Member</button>
-      </td>
-    </tr>
+    @for (item of members; track item) {
+      <tr>
+        <td>
+        <div class="d-flex justify-content-center align-items-center">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="item.selected">
+        </div>
+        </td>
+        <td (click)="onClickEditMember(item)">
+          {{ item.displayName }}
+        </td>
+        <td (click)="onClickEditMember(item)">
+          {{ item.email }}
+        </td>
+        <td (click)="onClickEditMember(item)">
+          {{ item.phone }}
+        </td>
+        <td (click)="onClickEditMember(item)">
+          {{ item.autoEnrollInNewRounds | booleanToYesNo }}
+        </td>
+        <td class="text-center">
+          <button class="btn btn-outline-primary bs-button me-2" (click)="onClickEditMember(item)">Edit Member</button>
+          <button class="btn btn-outline-danger bs-button" (click)="onClickDeleteMember(item)">Delete Member</button>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
     

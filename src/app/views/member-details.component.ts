@@ -7,6 +7,8 @@ import { DataService } from "../services/data.service";
 import { AppService } from "../services/app.service";
 
 import { Member } from "../models/member.model";
+import { cloneDeep } from "lodash";
+import { finalize } from "rxjs";
 
 @Component({
   selector: 'app-member-details',
@@ -47,7 +49,8 @@ export class MemberDetailsComponent implements OnInit {
       firstName: new FormControl<string>(null, [ Validators.required ]),
       lastName: new FormControl<string>(null, [ Validators.required ]),
       phone: new FormControl<string>(null),
-      email: new FormControl<string>(null, [ Validators.required, Validators.email ])
+      email: new FormControl<string>(null, [ Validators.required, Validators.email ]),
+      autoEnrollInNewRounds: new FormControl<boolean>(true)
     });
   }
 
@@ -56,30 +59,37 @@ export class MemberDetailsComponent implements OnInit {
     this.memberForm.controls.lastName.setValue(this.member.lastName);
     this.memberForm.controls.phone.setValue(this.member.phone);
     this.memberForm.controls.email.setValue(this.member.email);
+    this.memberForm.controls.autoEnrollInNewRounds.setValue(this.member.autoEnrollInNewRounds);
   }
 
-  updateModelFromForm(): void {
-    this.member.firstName = this.memberForm.controls.firstName.value;
-    this.member.lastName = this.memberForm.controls.lastName.value;
-    this.member.phone = this.memberForm.controls.phone.value;
-    this.member.email = this.memberForm.controls.email.value;
+  getModelFromForm(): Member {
+    const model = cloneDeep(this.member);
+
+    model.firstName = this.memberForm.controls.firstName.value;
+    model.lastName = this.memberForm.controls.lastName.value;
+    model.phone = this.memberForm.controls.phone.value;
+    model.email = this.memberForm.controls.email.value;
+    model.autoEnrollInNewRounds = this.memberForm.controls.autoEnrollInNewRounds.value;
+
+    return model;
   }
 
   // button handlers
 
   onClickSave(): void {
     if (this.memberForm.valid) {
-      this.updateModelFromForm();
+      const model =  this.getModelFromForm();
       
       const save$ = this.isNew
-      ? this.dataService.createMember(this.member)
-      : this.dataService.updateMember(this.member)
+      ? this.dataService.createMember(model)
+      : this.dataService.updateMember(model)
 
       this.appService.incrementBusyCounter();
-      save$.subscribe({
+      save$.pipe(
+        finalize(() => this.appService.decrementBusyCounter())
+      ).subscribe({
         error: (error: HttpErrorResponse) => {
           // TODO: constants file
-          this.appService.decrementBusyCounter();
           if (error.status === 400 && error.error === 'Email exists') {
             window.alert('Email is in use already.  Please enter a different email.')
           } else {
@@ -87,7 +97,6 @@ export class MemberDetailsComponent implements OnInit {
           }
         },
         complete: () => {
-          this.appService.decrementBusyCounter();
           this.saved.emit();
           this.parentModalRef?.hide();
         }
@@ -104,5 +113,6 @@ interface IFormModel {
   lastName: FormControl<string>,
   firstName: FormControl<string>,
   phone: FormControl<string>,
-  email: FormControl<string>
+  email: FormControl<string>,
+  autoEnrollInNewRounds: FormControl<boolean>;
 }

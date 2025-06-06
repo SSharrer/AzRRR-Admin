@@ -9,6 +9,8 @@ export class Member {
   email: string;
   phone: string;
   role: string;
+  autoEnrollInNewRounds: boolean;
 
+  selected: boolean
   displayName: string;
 }
