@@ -23,11 +23,14 @@ import { MemberListComponent } from './views/member-list.component';
 import { MemberDetailsComponent } from './views/member-details.component';
 import { MemberEmailComponent } from './views/member-email.component';
 import { BooleanToYesNoPipe } from './core/boolean-yesno.pipe';
+import { TagListComponent } from './views/tag-list.component';
+import { TagDetailsComponent } from './views/tag-details.component';
 
 const routes: Routes =[
   { path: 'login', component: LoginComponent },
   { path: 'rounds', component: RoundListComponent, canActivate: [ AuthGuard ] },
   { path: 'members', component: MemberListComponent, canActivate: [ AuthGuard ] },
+  { path: 'tags', component: TagListComponent, canActivate: [ AuthGuard ] },
   { path: 'home', component: HomeComponent, canActivate: [ AuthGuard ] },
   // wildcards 
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -45,6 +48,8 @@ const routes: Routes =[
     RoundListComponent,
     RoundDetailsComponent,
     RoundStartComponent,
+    TagListComponent,
+    TagDetailsComponent,
     OrgSummaryComponent,
     BooleanToYesNoPipe
   ],

@@ -28,6 +28,9 @@
         Auto Enroll
       </th>
       <th scope="col">
+        Tags
+      </th>
+      <th scope="col">
       </th>
     </tr>
   </thead>
@@ -50,6 +53,9 @@
         </td>
         <td (click)="onClickEditMember(item)">
           {{ item.autoEnrollInNewRounds | booleanToYesNo }}
+        </td>
+        <td (click)="onClickEditMember(item)">
+          {{ item.tagsString }}
         </td>
         <td class="text-center">
           <button class="btn btn-outline-primary bs-button me-2" (click)="onClickEditMember(item)">Edit Member</button>

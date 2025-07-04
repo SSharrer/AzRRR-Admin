@@ -5,5 +5,6 @@ export class StartRoundRequest {
   dq2: string;
   dq3: string;
   dq4: string;
-  dq5: string
+  dq5: string;
+  tagIDs: number[] = [];
 }

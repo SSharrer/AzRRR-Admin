@@ -17,6 +17,9 @@
         Group Size
       </th>
       <th scope="col">
+        Tags
+      </th>
+      <th scope="col">
       </th>
     </tr>
   </thead>
@@ -34,6 +37,9 @@
         </td>
         <td>
           {{ item.groupSize }}
+        </td>
+        <td>
+          {{ item.tagsString }}
         </td>
         <td class="text-center">
           <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEndRound(item)">End Round</button>

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
+import { finalize, forkJoin, Observable, tap } from "rxjs";
 import * as bootstrap from "bootstrap"
 import { isNil, orderBy, sortBy } from "lodash";
 
@@ -10,6 +11,7 @@ import { Round } from "../models/round.model";
 import { OrgSummary } from "../models/org.model";
 import { RoundDetailsComponent } from "./round-details.component";
 import { RoundStartComponent } from "./round-start.component";
+import { Tag } from "../models/tag.model";
 
 import * as Constant from '../core/constant';
 
@@ -27,6 +29,7 @@ export class RoundListComponent implements OnInit {
 
   org: OrgSummary;
   rounds: Round[] = [];
+  tags: Tag[] = [];
 
   constructor(
     private authService: AuthService,
@@ -36,23 +39,48 @@ export class RoundListComponent implements OnInit {
 
   ngOnInit(): void {
     this.org = this.authService.getOrg();
-    this.loadRounds()
+
+    const tasks = [];
+    tasks.push(this.loadRounds$());
+    tasks.push(this.loadTags$());
+
+    this.appService.incrementBusyCounter();
+    forkJoin(tasks).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
+      error: () => {
+        window.alert("There was an error loading Rounds!")
+      }
+    });
   }
 
   // load data methods
 
   loadRounds(): void {
     this.appService.incrementBusyCounter();
-    this.dataService.getAllRounds(this.org.orgID).subscribe({
-      next: rounds => {
-        this.appService.decrementBusyCounter();
-        this.rounds = orderBy(rounds, r => r.endDate, 'desc');
-      },
+    this.loadRounds$().pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
       error: () => {
-        this.appService.decrementBusyCounter();
         window.alert("There was an error loading Rounds!")
       }
     });
+  }
+
+  loadRounds$(): Observable<any> {
+    return this.dataService.getAllRounds(this.org.orgID).pipe(
+      tap(rounds => {
+        this.rounds = orderBy(rounds, r => r.endDate, 'desc');
+      })
+    );
+  }
+
+  loadTags$(): Observable<any> {
+    return this.dataService.getAllTags(this.org.orgID).pipe(
+      tap(tags => {
+        this.tags = sortBy(tags, t => t.name);
+      })
+    );
   }
 
   // button handlers
@@ -99,7 +127,7 @@ export class RoundListComponent implements OnInit {
         keyboard: false
       });
 
-      this.roundNewComponent.initialize(modalRef);
+      this.roundNewComponent.initialize(this.tags, modalRef);
 
       modalRef.show();
     }

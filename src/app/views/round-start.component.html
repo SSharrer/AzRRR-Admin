@@ -48,6 +48,26 @@
             <textarea class="form-control" id="dq5" maxlength="255" placeholder="" formControlName="dq5"></textarea>
             <label for="dq5">Question 5</label>
           </div>
+          <br/>
+          <div>
+            <span class="me-2">Tags: ({{ selectedtagCount }} selected)</span>
+            <img src="/assets/icons/info-circle.svg" alt="Bootstrap" width="20" height="20"
+              data-bs-toggle="tooltip"
+              title="If starting a round with tags, then only members that match at least one tag will be invited to the round.">
+            <br/>
+            <br/>
+            @for (item of tagSelectors; track item) {
+              <span
+                class="badge rounded-pill clickable-badge fw-normal fs-6 m-2"
+                [ngClass]="{
+                    'text-bg-primary': item.selected,
+                    'text-bg-light': !item.selected
+                  }"
+              (click)="onClickTag(item)">{{ item.tagName }}</span>
+            }
+            <br/>
+            <br/>
+          </div>
         </form>
       </div>
       <div class="modal-footer">

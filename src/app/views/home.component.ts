@@ -22,4 +22,8 @@ export class HomeComponent {
   onClickManageRounds(): void {
     this.router.navigateByUrl('/rounds');
   }
+
+  onClickManageTags(): void {
+    this.router.navigateByUrl('/tags');
+  }
 }

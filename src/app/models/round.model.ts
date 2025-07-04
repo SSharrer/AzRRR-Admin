@@ -1,4 +1,5 @@
 import { GroupMember } from "./group-member.model";
+import { RoundTag } from "./round-tag.model";
 
 export class Round {
   roundID: number;
@@ -12,4 +13,8 @@ export class Round {
   readyToSendNewRoundEmail: string;
   readyToMakeGroups: string;
   groupMembers: GroupMember[];
+  roundTags: RoundTag[] = [];
+
+  // derived properties
+  tagsString: string; 
 }

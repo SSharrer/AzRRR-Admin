@@ -11,6 +11,8 @@ import { environment } from "../../environments/environment";
 import { EmailRequest } from "../requests/email.request";
 import { observableToBeFn } from "rxjs/internal/testing/TestScheduler";
 import { RoundSignupRequest } from "../requests/round-signup.request";
+import { Tag } from "../models/tag.model";
+import { isEmpty, orderBy } from "lodash";
 
 
 @Injectable()
@@ -20,6 +22,45 @@ export class DataService {
     private http: HttpClient
   ) {}
 
+  // members
+
+  getAllMembers(orgId: number): Observable<Member[]> {
+    const url = environment.webApiBaseUrl +'member';
+    const params = {
+      orgId
+    };
+    return this.http.get<Member[]>(url, { params }).pipe(
+      tap(members => {
+        for (const member of members) {
+          member.displayName = Util.Name.firstCommaLast(member.firstName, member.lastName);
+          if (!isEmpty(member.memberTags)) {
+            member.tagsString = orderBy(member.memberTags, mt => mt.tag?.name).map(mt => mt.tag?.name).join(",")
+          }
+        }
+      })
+    )
+  }
+
+  createMember(member: Member): Observable<Member> {
+    const url = environment.webApiBaseUrl + 'member';
+    return this.http.post<Member>(url, member);
+  }
+
+  updateMember(member: Member): Observable<Member> {
+    const url = environment.webApiBaseUrl + 'member';
+    return this.http.put<Member>(url, member);
+  }
+
+  deleteMember(memberID: number): Observable<void> {
+    const url = environment.webApiBaseUrl + 'member/' + memberID.toString();
+    return this.http.delete<void>(url);
+  }
+
+  sendMemberEmail(request: EmailRequest): Observable<void> {
+    const url = environment.webApiBaseUrl + 'member/sendemail';
+    return this.http.post<void>(url, request);
+  }
+
   // rounds
 
   getAllRounds(orgId: number): Observable<Round[]> {
@@ -27,7 +68,15 @@ export class DataService {
     const params = {
       orgId
     };
-    return this.http.get<Round[]>(url, { params });
+    return this.http.get<Round[]>(url, { params }).pipe(
+      tap(rounds => {
+        for (const round of rounds) {
+          if (!isEmpty(round.roundTags)) {
+            round.tagsString = orderBy(round.roundTags, rt => rt.tag?.name).map(tr => tr.tag?.name).join(",")
+          }
+        }
+      })
+    )
   }
 
   getActiveRound(orgID: number): Observable<Round> {
@@ -58,39 +107,28 @@ export class DataService {
     return this.http.post(url, request);
   }
 
-  // members
+  // tags
 
-  getAllMembers(orgId: number): Observable<Member[]> {
-    const url = environment.webApiBaseUrl +'member';
+  getAllTags(orgId: number): Observable<Tag[]> {
+    const url = environment.webApiBaseUrl +'tag';
     const params = {
       orgId
     };
-    return this.http.get<Member[]>(url, { params }).pipe(
-      tap(members => {
-        for (const member of members) {
-          member.displayName = Util.Name.firstCommaLast(member.firstName, member.lastName);
-        }
-      })
-    )
+    return this.http.get<Tag[]>(url, { params });
   }
 
-  createMember(member: Member): Observable<Member> {
-    const url = environment.webApiBaseUrl + 'member';
-    return this.http.post<Member>(url, member);
+  createTag(tag: Tag): Observable<Tag> {
+    const url = environment.webApiBaseUrl + 'tag';
+    return this.http.post<Tag>(url, tag);
   }
 
-  updateMember(member: Member): Observable<Member> {
-    const url = environment.webApiBaseUrl + 'member';
-    return this.http.put<Member>(url, member);
+  updateTag(tag: Tag): Observable<Tag> {
+    const url = environment.webApiBaseUrl + 'tag';
+    return this.http.put<Tag>(url, tag);
   }
 
-  deleteMember(memberID: number): Observable<void> {
-    const url = environment.webApiBaseUrl + 'member/' + memberID.toString();
+  deleteTag(tagID: number): Observable<void> {
+    const url = environment.webApiBaseUrl + 'tag/' + tagID.toString();
     return this.http.delete<void>(url);
-  }
-
-  sendMemberEmail(request: EmailRequest): Observable<void> {
-    const url = environment.webApiBaseUrl + 'member/sendemail';
-    return this.http.post<void>(url, request);
   }
 }
