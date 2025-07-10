@@ -1,5 +1,5 @@
 import { Component, EventEmitter, model, OnInit, Output } from "@angular/core";
-import { cloneDeep, orderBy, sortBy } from "lodash";
+import { cloneDeep, isNil, orderBy, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
 
 import { GroupMember } from "../models/group-member.model";
@@ -86,16 +86,8 @@ export class RoundDetailsComponent implements OnInit {
       this.roundForm.controls.dq4.setValue(this.round.dQ4);
       this.roundForm.controls.dq5.setValue(this.round.dQ5);
 
-      if (this.groupsCreated) {
-        this.roundForm.controls.groupSize.disable();
-      }
-
-      if (this.groupEmailsSent) {
-        this.roundForm.controls.dq1.disable();
-        this.roundForm.controls.dq2.disable();
-        this.roundForm.controls.dq3.disable();
-        this.roundForm.controls.dq4.disable();
-        this.roundForm.controls.dq5.disable();
+      if (!isNil(this.round.endDate)) {
+        this.roundForm.disable();
       }
     }
 
@@ -146,20 +138,8 @@ export class RoundDetailsComponent implements OnInit {
 
   // ui helpers
 
-  get newRoundEmailsSent(): boolean {
-    return this.round.readyToSendNewRoundEmail === "N";
-  }
-
-  get groupsCreated(): boolean {
-    return this.newRoundEmailsSent && this.round.readyToMakeGroups === "N";
-  }
-
-  get groupEmailsSent(): boolean {
-    return this.groupsCreated && this.round.readyToSendEmail === "N";
-  }
-
   get canSave(): boolean {
-    return this.roundForm.valid && !this.groupEmailsSent;
+    return this.roundForm.valid && this.roundForm.enabled;
   }
 
   get tagsListString(): string {
