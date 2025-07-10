@@ -34,7 +34,7 @@ export class DataService {
         for (const member of members) {
           member.displayName = Util.Name.firstCommaLast(member.firstName, member.lastName);
           if (!isEmpty(member.memberTags)) {
-            member.tagsString = orderBy(member.memberTags, mt => mt.tag?.name).map(mt => mt.tag?.name).join(",")
+            member.tagsString = orderBy(member.memberTags, mt => mt.tag?.name).map(mt => mt.tag?.name).join(", ")
           }
         }
       })
@@ -72,7 +72,7 @@ export class DataService {
       tap(rounds => {
         for (const round of rounds) {
           if (!isEmpty(round.roundTags)) {
-            round.tagsString = orderBy(round.roundTags, rt => rt.tag?.name).map(tr => tr.tag?.name).join(",")
+            round.tagsString = orderBy(round.roundTags, rt => rt.tag?.name).map(tr => tr.tag?.name).join(", ");
           }
         }
       })
@@ -86,10 +86,20 @@ export class DataService {
     };
     return this.http.get<Round>(url, { params });
   }
+
+  getRoundByID(roundID: number): Observable<Round> {
+    const url = environment.webApiBaseUrl + 'round/' + roundID.toString();
+    return this.http.get<Round>(url);
+  }
   
   startRound(request: StartRoundRequest): Observable<void> {
     const url = environment.webApiBaseUrl +'round/start'
     return this.http.post<void>(url, request);
+  }
+
+  updateRound(round: Round): Observable<Round> {
+    const url = environment.webApiBaseUrl +'round'
+    return this.http.put<Round>(url, round);
   }
 
   endRound(roundID: number): Observable<void> {

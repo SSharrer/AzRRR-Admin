@@ -54,12 +54,12 @@
         <td (click)="onClickEditMember(item)">
           {{ item.autoEnrollInNewRounds | booleanToYesNo }}
         </td>
-        <td (click)="onClickEditMember(item)">
+        <td style="max-width: 300px;" (click)="onClickEditMember(item)">
           {{ item.tagsString }}
         </td>
         <td class="text-center">
-          <button class="btn btn-outline-primary bs-button me-2" (click)="onClickEditMember(item)">Edit Member</button>
-          <button class="btn btn-outline-danger bs-button" (click)="onClickDeleteMember(item)">Delete Member</button>
+          <button class="btn btn-outline-primary bs-button me-2" (click)="onClickEditMember(item)">Edit</button>
+          <button class="btn btn-outline-danger bs-button" (click)="onClickDeleteMember(item)">Delete</button>
         </td>
       </tr>
     }

@@ -38,10 +38,10 @@
         <td>
           {{ item.groupSize }}
         </td>
-        <td>
+        <td style="max-width: 300px;">
           {{ item.tagsString }}
         </td>
-        <td class="text-center">
+        <td class ="text-center">
           <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickEndRound(item)">End Round</button>
           <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickRoundDetails(item)">Round Details</button>
           <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteRound(item)">Delete Round</button>
@@ -51,7 +51,8 @@
   </tbody>
 </table>
 
-<app-round-details>
+<app-round-details
+  (saved)="loadRounds()">
 </app-round-details>
 
 <app-round-start

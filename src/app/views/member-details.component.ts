@@ -80,7 +80,6 @@ export class MemberDetailsComponent implements OnInit, AfterViewInit {
       tagSelector.selected = this.member.memberTags?.some(mt => mt.tagID === tag.id) ?? false;
       this.tagSelectors.push(tagSelector);
     }
-    console.log(this.tagSelectors);
   }
 
   getModelFromForm(): Member {

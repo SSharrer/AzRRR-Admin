@@ -86,14 +86,17 @@ export class RoundListComponent implements OnInit {
   // button handlers
 
   onClickRoundDetails(round: Round): void {
-    const modalRef = new bootstrap.Modal(Constant.Modal.roundDetails, {
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    this.roundDetailsComponent.initialize(round.groupMembers, modalRef);
-
-    modalRef.show();
+    this.appService.incrementBusyCounter();
+    this.dataService.getRoundByID(round.roundID).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
+      next: round => {
+        this.openRound(round);
+      },
+      error: () => {
+        window.alert("There was an error opening the Round!");
+      },
+    })
   }
 
   onClickEndRound(round: Round): void {
@@ -119,9 +122,6 @@ export class RoundListComponent implements OnInit {
     if (this.rounds.some(r => isNil(r.endDate))) {
       window.alert('Cannot start new Round because there is an open Round!')
     } else {
-      // if (window.confirm('Are you sure you want to start a new Round?')) {
-      //   this.startRound();
-      // }
       const modalRef = new bootstrap.Modal(Constant.Modal.roundStart, {
         backdrop: 'static',
         keyboard: false
@@ -196,5 +196,16 @@ export class RoundListComponent implements OnInit {
         this.loadRounds();
       }
     });
+  }
+
+  private openRound(round: Round): void {
+    const modalRef = new bootstrap.Modal(Constant.Modal.roundDetails, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    this.roundDetailsComponent.initialize(round, modalRef);
+
+    modalRef.show();
   }
 }
