@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 
 import { AuthService } from "../services/auth.service";
 import { AppService } from "../services/app.service";
@@ -8,10 +9,14 @@ import { DataService } from "../services/data.service";
 import { EmailRequest } from "../requests/email.request";
 import { OrgSummary } from "../models/org.model";
 
-
 @Component({
   selector: 'app-member-email',
-  templateUrl: './member-email.component.html'
+  templateUrl: './member-email.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule 
+  ]
 })
 export class MemberEmailComponent implements OnInit {
   

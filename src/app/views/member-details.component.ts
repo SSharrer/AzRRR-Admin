@@ -1,21 +1,27 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import * as bootstrap from "bootstrap"
+import { finalize } from "rxjs";
+import { cloneDeep, isEmpty } from "lodash";
 
 import { DataService } from "../services/data.service";
 import { AppService } from "../services/app.service";
 
 import { Member } from "../models/member.model";
-import { cloneDeep, isEmpty } from "lodash";
-import { finalize } from "rxjs";
 import { Tag } from "../models/tag.model";
 import { TagSelector } from "../models/tag-selector.model";
 import { MemberTag } from "../models/member-tag.model";
 
 @Component({
   selector: 'app-member-details',
-  templateUrl: './member-details.component.html'
+  templateUrl: './member-details.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
 export class MemberDetailsComponent implements OnInit, AfterViewInit {
 

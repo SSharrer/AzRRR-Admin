@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { finalize, forkJoin, Observable, tap } from "rxjs";
 import * as bootstrap from "bootstrap"
 import { isNil, orderBy, sortBy } from "lodash";
@@ -12,12 +13,23 @@ import { OrgSummary } from "../models/org.model";
 import { RoundDetailsComponent } from "./round-details.component";
 import { RoundStartComponent } from "./round-start.component";
 import { Tag } from "../models/tag.model";
+import { BooleanToYesNoPipe } from "../core/boolean-yesno.pipe";
 
 import * as Constant from '../core/constant';
 
+
+
 @Component({
   selector: 'app-rounds',
-  templateUrl: './round-list.component.html'
+  templateUrl: './round-list.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    BooleanToYesNoPipe,
+    RoundStartComponent,
+    RoundDetailsComponent
+  ]
+
 })
 export class RoundListComponent implements OnInit {
   
@@ -105,7 +117,7 @@ export class RoundListComponent implements OnInit {
       if (round.readyToSendNewRoundEmail === 'Y') {
         window.alert('Cannot end this Round because invitation emails have not been sent!  You can delete this Round instead.')
       } else {
-        if (window.confirm('Are you sure you want to end this Round?')) {
+        if (window.confirm('Are you sure you want to end this Round?  Group Size and Questions cannot be changed once the Round has ended.')) {
           this.endRound(round.roundID);
         }
       }

@@ -1,19 +1,25 @@
 import { Component, EventEmitter, model, OnInit, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { cloneDeep, isNil, orderBy, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
+import { finalize } from "rxjs";
 
-import { GroupMember } from "../models/group-member.model";
-
-import * as Util from '../core/util';
-import { Round } from "../models/round.model";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { DataService } from "../services/data.service";
 import { AppService } from "../services/app.service";
-import { finalize } from "rxjs";
+
+import { Round } from "../models/round.model";
+
+import * as Util from '../core/util';
 
 @Component({
   selector: 'app-round-details',
-  templateUrl: './round-details.component.html'
+  templateUrl: './round-details.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
 export class RoundDetailsComponent implements OnInit {
 

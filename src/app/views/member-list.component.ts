@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, viewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { finalize, forkJoin, Observable, tap } from "rxjs";
 import { cloneDeep, isEmpty, isNil, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
@@ -13,14 +15,22 @@ import { MemberDetailsComponent } from "./member-details.component";
 import { MemberEmailComponent } from "./member-email.component";
 import { Round } from "../models/round.model";
 import { RoundSignupRequest } from "../requests/round-signup.request";
+import { Tag } from "../models/tag.model";
+import { BooleanToYesNoPipe } from "../core/boolean-yesno.pipe";
 
 import * as Constant from '../core/constant';
-import { Tag } from "../models/tag.model";
-import { observableToBeFn } from "rxjs/internal/testing/TestScheduler";
 
 @Component({
   selector: 'app-users',
-  templateUrl: './member-list.component.html'
+  templateUrl: './member-list.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MemberDetailsComponent,
+    MemberEmailComponent,
+    BooleanToYesNoPipe
+  ]
 })
 export class MemberListComponent implements OnInit {
   

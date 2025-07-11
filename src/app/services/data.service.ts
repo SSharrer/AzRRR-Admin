@@ -15,7 +15,9 @@ import { Tag } from "../models/tag.model";
 import { isEmpty, orderBy } from "lodash";
 
 
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class DataService {
 
   constructor(

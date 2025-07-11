@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { finalize } from "rxjs";
 import { cloneDeep, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
@@ -15,7 +16,12 @@ import * as Constant from '../core/constant';
 
 @Component({
   selector: 'app-tags',
-  templateUrl: './tag-list.component.html'
+  templateUrl: './tag-list.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    TagDetailsComponent
+  ]
 })
 export class TagListComponent implements OnInit {
 

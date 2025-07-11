@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import * as bootstrap from "bootstrap"
 
@@ -6,7 +7,11 @@ import { AuthService } from "../services/auth.service";
 
 @Component({
   selector: 'app-org-summary',
-  templateUrl: './org-summary.component.html'
+  templateUrl: './org-summary.component.html',
+  standalone: true,
+  imports: [
+    CommonModule
+  ]
 })
 export class OrgSummaryComponent {
 

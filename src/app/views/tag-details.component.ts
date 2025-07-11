@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { finalize } from "rxjs";
 import { cloneDeep } from "lodash";
 
@@ -10,7 +11,12 @@ import { Tag } from "../models/tag.model";
 
 @Component({
   selector: 'app-tag-details',
-  templateUrl: './tag-details.component.html'
+  templateUrl: './tag-details.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
 export class TagDetailsComponent implements OnInit {
   

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import * as bootstrap from "bootstrap"
+import { isEmpty } from "lodash";
 
 import { AuthService } from "../services/auth.service";
 import { DataService } from "../services/data.service";
@@ -10,11 +12,15 @@ import { OrgSummary } from "../models/org.model";
 import { StartRoundRequest } from "../requests/start-round.request";
 import { Tag } from "../models/tag.model";
 import { TagSelector } from "../models/tag-selector.model";
-import { isEmpty } from "lodash";
 
 @Component({
   selector: 'app-round-start',
-  templateUrl: './round-start.component.html'
+  templateUrl: './round-start.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
 export class RoundStartComponent implements OnInit, AfterViewInit {
 

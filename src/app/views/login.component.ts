@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { isNil } from "lodash";
 
@@ -10,7 +11,12 @@ import { LoginRequest, LoginRequestResult, LoginRequestStatus } from "../request
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule 
+  ]
 })
 export class LoginComponent implements OnInit {
   

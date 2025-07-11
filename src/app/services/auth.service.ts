@@ -8,7 +8,9 @@ import { OrgSummary } from "../models/org.model";
 
 import { environment } from "../../environments/environment";
 
-@Injectable()
+@Injectable({
+  providedIn: "root"
+})
 export class AuthService {
   
   private _authToken: string = null;
