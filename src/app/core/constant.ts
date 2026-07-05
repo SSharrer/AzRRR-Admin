@@ -5,4 +5,5 @@ export class Modal {
   static orgSummary = '#orgSummaryModal';
   static roundDetails = '#roundDetailsModal';
   static roundStart = '#roundStartModal'
+  static tagDetails = '#tagDetailsModal';
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { finalize, forkJoin, Observable, tap } from "rxjs";
 import * as bootstrap from "bootstrap"
 import { isNil, orderBy, sortBy } from "lodash";
 
@@ -10,12 +12,24 @@ import { Round } from "../models/round.model";
 import { OrgSummary } from "../models/org.model";
 import { RoundDetailsComponent } from "./round-details.component";
 import { RoundStartComponent } from "./round-start.component";
+import { Tag } from "../models/tag.model";
+import { BooleanToYesNoPipe } from "../core/boolean-yesno.pipe";
 
 import * as Constant from '../core/constant';
 
+
+
 @Component({
   selector: 'app-rounds',
-  templateUrl: './round-list.component.html'
+  templateUrl: './round-list.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    BooleanToYesNoPipe,
+    RoundStartComponent,
+    RoundDetailsComponent
+  ]
+
 })
 export class RoundListComponent implements OnInit {
   
@@ -27,6 +41,7 @@ export class RoundListComponent implements OnInit {
 
   org: OrgSummary;
   rounds: Round[] = [];
+  tags: Tag[] = [];
 
   constructor(
     private authService: AuthService,
@@ -36,36 +51,64 @@ export class RoundListComponent implements OnInit {
 
   ngOnInit(): void {
     this.org = this.authService.getOrg();
-    this.loadRounds()
+
+    const tasks = [];
+    tasks.push(this.loadRounds$());
+    tasks.push(this.loadTags$());
+
+    this.appService.incrementBusyCounter();
+    forkJoin(tasks).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
+      error: () => {
+        window.alert("There was an error loading Rounds!")
+      }
+    });
   }
 
   // load data methods
 
   loadRounds(): void {
     this.appService.incrementBusyCounter();
-    this.dataService.getAllRounds(this.org.orgID).subscribe({
-      next: rounds => {
-        this.appService.decrementBusyCounter();
-        this.rounds = orderBy(rounds, r => r.endDate, 'desc');
-      },
+    this.loadRounds$().pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
       error: () => {
-        this.appService.decrementBusyCounter();
         window.alert("There was an error loading Rounds!")
       }
     });
   }
 
+  loadRounds$(): Observable<any> {
+    return this.dataService.getAllRounds(this.org.orgID).pipe(
+      tap(rounds => {
+        this.rounds = orderBy(rounds, r => r.endDate, 'desc');
+      })
+    );
+  }
+
+  loadTags$(): Observable<any> {
+    return this.dataService.getAllTags(this.org.orgID).pipe(
+      tap(tags => {
+        this.tags = sortBy(tags, t => t.name);
+      })
+    );
+  }
+
   // button handlers
 
   onClickRoundDetails(round: Round): void {
-    const modalRef = new bootstrap.Modal(Constant.Modal.roundDetails, {
-      backdrop: 'static',
-      keyboard: false
-    });
-
-    this.roundDetailsComponent.initialize(round.groupMembers, modalRef);
-
-    modalRef.show();
+    this.appService.incrementBusyCounter();
+    this.dataService.getRoundByID(round.roundID).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
+      next: round => {
+        this.openRound(round);
+      },
+      error: () => {
+        window.alert("There was an error opening the Round!");
+      },
+    })
   }
 
   onClickEndRound(round: Round): void {
@@ -74,7 +117,7 @@ export class RoundListComponent implements OnInit {
       if (round.readyToSendNewRoundEmail === 'Y') {
         window.alert('Cannot end this Round because invitation emails have not been sent!  You can delete this Round instead.')
       } else {
-        if (window.confirm('Are you sure you want to end this Round?')) {
+        if (window.confirm('Are you sure you want to end this Round?  Group Size and Questions cannot be changed once the Round has ended.')) {
           this.endRound(round.roundID);
         }
       }
@@ -91,15 +134,12 @@ export class RoundListComponent implements OnInit {
     if (this.rounds.some(r => isNil(r.endDate))) {
       window.alert('Cannot start new Round because there is an open Round!')
     } else {
-      // if (window.confirm('Are you sure you want to start a new Round?')) {
-      //   this.startRound();
-      // }
       const modalRef = new bootstrap.Modal(Constant.Modal.roundStart, {
         backdrop: 'static',
         keyboard: false
       });
 
-      this.roundNewComponent.initialize(modalRef);
+      this.roundNewComponent.initialize(this.tags, modalRef);
 
       modalRef.show();
     }
@@ -168,5 +208,16 @@ export class RoundListComponent implements OnInit {
         this.loadRounds();
       }
     });
+  }
+
+  private openRound(round: Round): void {
+    const modalRef = new bootstrap.Modal(Constant.Modal.roundDetails, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    this.roundDetailsComponent.initialize(round, modalRef);
+
+    modalRef.show();
   }
 }

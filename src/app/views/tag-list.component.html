@@ -1,0 +1,31 @@
+<h4 class="mt-3">Manage Tags</h4>
+<hr />
+<button class="btn btn-outline-primary bs-button" (click)="onClickNewTag()">New Tag</button>
+<table class="table table-bordered table-hover mt-3">
+  <thead class="table-light">
+    <tr>
+      <th scope="col">
+        Name
+      </th>
+      <th scope="col">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+     @for (item of tags; track item) {
+      <tr (click)="onClickTagDetails(item)">
+        <td>
+          {{ item.name }}
+        </td>
+         <td class="text-center">
+          <button class="btn btn-outline-primary bs-button me-2" (click)="$event.stopPropagation(); onClickTagDetails(item)">Tag Details</button>
+          <button class="btn btn-outline-danger bs-button" (click)="$event.stopPropagation(); onClickDeleteTag(item)">Delete Tag</button>
+        </td>
+      </tr>
+     }
+  </tbody>
+</table>
+
+<app-tag-details
+  (saved)="loadTags()">
+</app-tag-details>

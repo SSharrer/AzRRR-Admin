@@ -1,11 +1,19 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
+import { provideRouter } from '@angular/router';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-// bootstrapApplication(AppComponent, appConfig)
-//   .catch((err) => console.error(err));
+import { routes } from './app/routes';
+import { ShellComponent } from './app/shell.component';
+import { tokenInterceptor } from './app/core/token.interceptor';
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+
+bootstrapApplication(ShellComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(
+      withInterceptors([tokenInterceptor])
+    ),
+    provideAnimations(),
+  ]
+});
