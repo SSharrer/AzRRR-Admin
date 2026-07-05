@@ -1,19 +1,17 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, tap } from "rxjs";
+import { isEmpty, orderBy } from "lodash";
 
 import { Round } from "../models/round.model";
 import { Member } from "../models/member.model";
 import { StartRoundRequest } from "../requests/start-round.request";
-
-import * as Util from '../core/util';
-import { environment } from "../../environments/environment";
 import { EmailRequest } from "../requests/email.request";
-import { observableToBeFn } from "rxjs/internal/testing/TestScheduler";
 import { RoundSignupRequest } from "../requests/round-signup.request";
 import { Tag } from "../models/tag.model";
-import { isEmpty, orderBy } from "lodash";
 
+import { environment } from "../../environments/environment";
+import * as Util from '../core/util';
 
 @Injectable({
   providedIn: "root"
