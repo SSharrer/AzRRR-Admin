@@ -1,20 +1,29 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { AfterViewInit, Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import * as bootstrap from "bootstrap"
+import { finalize } from "rxjs";
+import { cloneDeep, isEmpty } from "lodash";
 
 import { DataService } from "../services/data.service";
 import { AppService } from "../services/app.service";
 
 import { Member } from "../models/member.model";
-import { cloneDeep } from "lodash";
-import { finalize } from "rxjs";
+import { Tag } from "../models/tag.model";
+import { TagSelector } from "../models/tag-selector.model";
+import { MemberTag } from "../models/member-tag.model";
 
 @Component({
   selector: 'app-member-details',
-  templateUrl: './member-details.component.html'
+  templateUrl: './member-details.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
-export class MemberDetailsComponent implements OnInit {
+export class MemberDetailsComponent implements OnInit, AfterViewInit {
 
   @Output()
   saved = new EventEmitter<void>();
@@ -22,6 +31,8 @@ export class MemberDetailsComponent implements OnInit {
   member: Member;
   isNew: boolean;
   parentModalRef: bootstrap.Modal;
+  tags: Tag[] = [];
+  tagSelectors: TagSelector[] = [];
 
   memberForm: FormGroup<IFormModel>;
 
@@ -35,9 +46,15 @@ export class MemberDetailsComponent implements OnInit {
     this.createForm();
   }
 
-  initialize(member: Member, isNew: boolean, parentModalRef: bootstrap.Modal): void {
+  ngAfterViewInit(): void {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
+  }
+
+  initialize(member: Member, isNew: boolean, tags: Tag[], parentModalRef: bootstrap.Modal): void {
     this.member = member;
     this.isNew = isNew;
+    this.tags = tags ?? [];
     this.parentModalRef = parentModalRef;
 
     this.createForm();
@@ -50,7 +67,7 @@ export class MemberDetailsComponent implements OnInit {
       lastName: new FormControl<string>(null, [ Validators.required ]),
       phone: new FormControl<string>(null),
       email: new FormControl<string>(null, [ Validators.required, Validators.email ]),
-      autoEnrollInNewRounds: new FormControl<boolean>(true)
+      autoEnrollInNewRounds: new FormControl<boolean>(true),
     });
   }
 
@@ -60,6 +77,15 @@ export class MemberDetailsComponent implements OnInit {
     this.memberForm.controls.phone.setValue(this.member.phone);
     this.memberForm.controls.email.setValue(this.member.email);
     this.memberForm.controls.autoEnrollInNewRounds.setValue(this.member.autoEnrollInNewRounds);
+
+    this.tagSelectors = [];
+    for (const tag of this.tags) {
+      const tagSelector = new TagSelector();
+      tagSelector.tagID = tag.id;
+      tagSelector.tagName = tag.name;
+      tagSelector.selected = this.member.memberTags?.some(mt => mt.tagID === tag.id) ?? false;
+      this.tagSelectors.push(tagSelector);
+    }
   }
 
   getModelFromForm(): Member {
@@ -70,6 +96,15 @@ export class MemberDetailsComponent implements OnInit {
     model.phone = this.memberForm.controls.phone.value;
     model.email = this.memberForm.controls.email.value;
     model.autoEnrollInNewRounds = this.memberForm.controls.autoEnrollInNewRounds.value;
+
+    model.memberTags = [];
+    for (const tagSelector of this.tagSelectors.filter(s => s.selected)) {
+      const memberTag = new MemberTag();
+      memberTag.id = 0;
+      memberTag.memberID = this.member.memberID;
+      memberTag.tagID = tagSelector.tagID;
+      model.memberTags.push(memberTag);
+    }
 
     return model;
   }
@@ -106,6 +141,18 @@ export class MemberDetailsComponent implements OnInit {
 
   onClickCancel(): void {
     this.parentModalRef?.hide();
+  }
+
+  onClickTag(item: TagSelector): void {
+    item.selected = !item.selected;
+  }
+
+  // ui helpers
+
+  get selectedtagCount(): number {
+    return !isEmpty(this.tagSelectors)
+    ? this.tagSelectors.filter(t => t.selected).length
+    : 0;
   }
 }
 

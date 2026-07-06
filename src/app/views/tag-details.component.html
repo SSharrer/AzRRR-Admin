@@ -1,0 +1,23 @@
+<div class="modal" id="tagDetailsModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tag Details</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="tagForm">
+          <div class="form-floating mb-2">
+            <input type="text" class="form-control" placeholder="" formControlName="name"
+              maxlength="50"
+              [class.is-invalid]="!tagForm.controls.name.valid">
+            <label>Name</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-primary bs-button me-2" (click)="onClickSave()" [disabled]="!tagForm.valid">Save Changes</button>
+        <button class="btn btn-outline-danger  bs-button" (click)="onClickCancel()">Cancel Changes</button>
+      </div>
+    </div>
+  </div>
+</div>

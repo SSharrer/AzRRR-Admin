@@ -1,3 +1,4 @@
+import { MemberTag } from "./member-tag.model";
 export class Member {
   memberID: number;
   orgID: number;
@@ -10,7 +11,10 @@ export class Member {
   phone: string;
   role: string;
   autoEnrollInNewRounds: boolean;
+  memberTags: MemberTag[] = [];
 
+  // derived properties
   selected: boolean
   displayName: string;
+  tagsString: string;
 }

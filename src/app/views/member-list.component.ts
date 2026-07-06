@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild, viewChild } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { finalize, forkJoin, Observable, tap } from "rxjs";
 import { cloneDeep, isEmpty, isNil, sortBy } from "lodash";
 import * as bootstrap from "bootstrap"
@@ -11,14 +13,24 @@ import { OrgSummary } from "../models/org.model";
 import { Member } from "../models/member.model";
 import { MemberDetailsComponent } from "./member-details.component";
 import { MemberEmailComponent } from "./member-email.component";
-
-import * as Constant from '../core/constant';
 import { Round } from "../models/round.model";
 import { RoundSignupRequest } from "../requests/round-signup.request";
+import { Tag } from "../models/tag.model";
+import { BooleanToYesNoPipe } from "../core/boolean-yesno.pipe";
+
+import * as Constant from '../core/constant';
 
 @Component({
   selector: 'app-users',
-  templateUrl: './member-list.component.html'
+  templateUrl: './member-list.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MemberDetailsComponent,
+    MemberEmailComponent,
+    BooleanToYesNoPipe
+  ]
 })
 export class MemberListComponent implements OnInit {
   
@@ -30,6 +42,7 @@ export class MemberListComponent implements OnInit {
 
   org: OrgSummary;
   members: Member[] = [];
+  tags: Tag[] = [];
   activeRound: Round = null;
 
   constructor(
@@ -44,6 +57,7 @@ export class MemberListComponent implements OnInit {
     const tasks = [];
     tasks.push(this.loadActiveRound$());
     tasks.push(this.loadMembers$());
+    tasks.push(this.loadTags$());
 
     this.appService.incrementBusyCounter();
     forkJoin(tasks).pipe(
@@ -54,7 +68,6 @@ export class MemberListComponent implements OnInit {
       }
     })
   }
-
 
   // load data methods
 
@@ -77,12 +90,20 @@ export class MemberListComponent implements OnInit {
     );
   }
 
+  loadTags$(): Observable<any> {
+    return this.dataService.getAllTags(this.org.orgID).pipe(
+      tap(tags => {
+        this.tags = sortBy(tags, t => t.name);
+      })
+    );
+  }
+
   loadActiveRound$(): Observable<any> {
     return this.dataService.getActiveRound(this.org.orgID).pipe(
       tap(round => {
         this.activeRound = round;
       })
-    )
+    );
   }
 
   // click handlers
@@ -95,7 +116,7 @@ export class MemberListComponent implements OnInit {
       keyboard: false
     });
     
-    this.memberDetailsComponent.initialize(memberClone, false, modalRef);
+    this.memberDetailsComponent.initialize(memberClone, false, this.tags, modalRef);
 
     modalRef.show();
   }
@@ -116,7 +137,7 @@ export class MemberListComponent implements OnInit {
       keyboard: false
     });
 
-    this.memberDetailsComponent.initialize(member, true, modalRef);
+    this.memberDetailsComponent.initialize(member, true, this.tags, modalRef);
 
     modalRef.show();
   }
@@ -180,15 +201,15 @@ export class MemberListComponent implements OnInit {
 
   deleteMember(memberID: number): void {
     this.appService.incrementBusyCounter();
-    this.dataService.deleteMember(memberID).subscribe({
+    this.dataService.deleteMember(memberID).pipe(
+      finalize(() => this.appService.decrementBusyCounter())
+    ).subscribe({
       error: () => {
-        this.appService.decrementBusyCounter();
         window.alert("There was an error deleting the Member!");
       },
       complete: () => {
-        this.appService.decrementBusyCounter();
         window.alert('Member successfully deleted!');
-        this.loadMembers$();
+        this.loadMembers();
       }
     })
   }

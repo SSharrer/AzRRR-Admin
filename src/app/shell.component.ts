@@ -6,11 +6,20 @@ import { AuthService } from "./services/auth.service";
 import { AppService } from "./services/app.service";
 
 import { OrgSummaryComponent } from "./views/org-summary.component";
+import { BusySpinnerComponent } from "./views/busy-spinner.component";
 
 import * as Constant from './core/constant';
+import { RouterModule } from "@angular/router";
+
 @Component({
   selector: 'app-root',
-  templateUrl: './shell.component.html'
+  templateUrl: './shell.component.html',
+  standalone: true,
+  imports: [
+    RouterModule,
+    BusySpinnerComponent,
+    OrgSummaryComponent
+  ]
 })
 export class ShellComponent implements OnInit, OnDestroy {
 

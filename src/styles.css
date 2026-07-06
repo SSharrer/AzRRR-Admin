@@ -4,6 +4,11 @@
   min-width: 120px;
 }
 
+.clickable-badge {
+  cursor: pointer;
+}
+
+
 /* does not work */
 /* .modal-backdrop {
     z-index: -1000;
