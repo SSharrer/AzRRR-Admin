@@ -12,6 +12,7 @@ import { Tag } from "../models/tag.model";
 
 import { environment } from "../../environments/environment";
 import * as Util from '../core/util';
+import { ResetMemberPasswordRequest } from "@app/requests/reset-password.request";
 
 @Injectable({
   providedIn: "root"
@@ -58,6 +59,11 @@ export class DataService {
 
   sendMemberEmail(request: EmailRequest): Observable<void> {
     const url = environment.webApiBaseUrl + 'member/sendemail';
+    return this.http.post<void>(url, request);
+  }
+
+  resetMemberPassword(request: ResetMemberPasswordRequest): Observable<void> {
+    const url = environment.webApiBaseUrl + 'member/resetmemberpassord';
     return this.http.post<void>(url, request);
   }
 
@@ -140,5 +146,15 @@ export class DataService {
   deleteTag(tagID: number): Observable<void> {
     const url = environment.webApiBaseUrl + 'tag/' + tagID.toString();
     return this.http.delete<void>(url);
+  }
+
+  // misc
+
+  passwordMeetsComplexity(password: string): Observable<boolean> {
+    const url = environment.webApiBaseUrl + 'account/passwordmeetscomplexity';
+    const body = {
+      password
+    };
+    return this.http.post<boolean>(url, body);
   }
 }

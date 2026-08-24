@@ -2,6 +2,7 @@
 <hr/>
 <button class="btn btn-outline-primary bs-button me-2" (click)="onClickNewMember()">New Member</button>
 <button class="btn btn-outline-primary bs-button me-2" (click)="onClickEmailMembers()">Email Members</button>
+<button class="btn btn-outline-primary bs-button me-2" type="button" [disabled]="!hasSelectedMembers" (click)="onClickResetPassword()">Reset Password</button>
 <button class="btn btn-outline-primary bs-button me-2" [disabled]="!canSignupMembers" (click)="onClickSignupMembers()">Signup Selected Members</button>
 @if (!hasActiveRound) {
   <span class="text-danger">No active Round!</span>
@@ -71,4 +72,6 @@
 </app-member-details>
 <app-member-email>
 </app-member-email>
+<app-modal-reset-password>
+</app-modal-reset-password>
 

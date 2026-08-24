@@ -13,12 +13,13 @@ import { OrgSummary } from "../models/org.model";
 import { Member } from "../models/member.model";
 import { MemberDetailsComponent } from "./member-details.component";
 import { MemberEmailComponent } from "./member-email.component";
+import { ModalResetPasswordComponent } from "./modal-reset-password.component";
 import { Round } from "../models/round.model";
 import { RoundSignupRequest } from "../requests/round-signup.request";
 import { Tag } from "../models/tag.model";
 import { BooleanToYesNoPipe } from "../core/boolean-yesno.pipe";
 
-import * as Constant from '../core/constant';
+import * as Constant from "@app/core/constant";
 
 @Component({
   selector: 'app-users',
@@ -29,6 +30,7 @@ import * as Constant from '../core/constant';
     FormsModule,
     MemberDetailsComponent,
     MemberEmailComponent,
+    ModalResetPasswordComponent,
     BooleanToYesNoPipe
   ]
 })
@@ -39,6 +41,9 @@ export class MemberListComponent implements OnInit {
 
   @ViewChild(MemberEmailComponent)
   memberEmailComponent: MemberEmailComponent;
+
+  @ViewChild(ModalResetPasswordComponent)
+  modalResetPasswordComponent: ModalResetPasswordComponent;
 
   org: OrgSummary;
   members: Member[] = [];
@@ -153,6 +158,20 @@ export class MemberListComponent implements OnInit {
     modalRef.show();
   }
 
+  onClickResetPassword(): void {
+    if (!this.hasSelectedMembers) {
+      return;
+    }
+
+    const modalRef = new bootstrap.Modal(Constant.Modal.resetPassword, {
+      backdrop: 'static',
+      keyboard: false
+    });
+
+    this.modalResetPasswordComponent.initialize(modalRef, this.members.filter(member => member.selected));
+    modalRef.show();
+  }
+
   onClickSignupMembers(): void {
     if (!this.canSignupMembers) {
       return;
@@ -170,7 +189,7 @@ export class MemberListComponent implements OnInit {
         finalize(() => this.appService.decrementBusyCounter())
       ).subscribe({
         error: () => {
-          window.alert("There was an error processing your request!");
+          window.alert(Constant.ErrorMessage.default);
         },
         complete: () => {
           window.alert("Selected Members signed up to Active Round!");
@@ -187,6 +206,10 @@ export class MemberListComponent implements OnInit {
 
   get hasActiveRound(): boolean {
     return !isNil(this.activeRound);
+  }
+
+  get hasSelectedMembers(): boolean {
+    return !isEmpty(this.members) && this.members.some(m => m.selected);
   }
 
   get canSignupMembers(): boolean {
